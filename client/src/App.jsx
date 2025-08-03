@@ -44,6 +44,7 @@ return(
             <Route path="/instructor/courses" element={<InstructorCourses />} />
             <Route path="/instructor/create-course" element={<CreateCourse />} />
             <Route path="/instructor/create-quiz/:courseId" element={<CreateQuiz />} />
+            <Route path="/instructor/enrolled-students/:courseId" element={<CreateQuiz />} />
           </Route>
 
           <Route element={<ProtectedRoute allowedRoles={['admin']} />}>

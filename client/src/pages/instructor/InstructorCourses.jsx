@@ -1,12 +1,20 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useGetMyCoursesQuery, useDeleteCourseMutation } from '../../features/instructor/instructorApi';
 import ThumbnailImage from '../../components/ThumbnailImage';
+import StudentsModal from './StudentsModal';
 
 const InstructorCourses = () => {
   const { data: courses = [], isLoading } = useGetMyCoursesQuery();
   const [deleteCourse, { isLoading: isDeleting }] = useDeleteCourseMutation();
   const navigate = useNavigate();
+  const [showStudentsModal, setShowStudentsModal] = useState(false);
+  const [selectedCourseId, setSelectedCourseId] = useState(null);
 
+  const handleViewStudents = (courseId) => {
+    setSelectedCourseId(courseId);
+    setShowStudentsModal(true);
+  };
 
   return (
 
@@ -75,14 +83,18 @@ const InstructorCourses = () => {
                   <div className="flex justify-between space-x-3">
                     <button
                       onClick={() => navigate(`/instructor/create-quiz/${course._id}`)}
-                      className="flex-1 px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors duration-200 text-sm font-medium"
+                      className="flex-1 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-all duration-200 text-sm font-medium shadow-sm hover:shadow-md"
                     >
                       Add Quiz
                     </button>
                     <button
+                      onClick={() => handleViewStudents(course._id)}
+                      className="flex-1 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-all duration-200 text-sm font-medium shadow-sm hover:shadow-md"
+                    >View Students</button>
+                    <button
                       onClick={() => deleteCourse(course._id)}
                       disabled={isDeleting}
-                      className="flex-1 px-3 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors duration-200 text-sm font-medium"
+                      className="flex-1 px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-lg transition-all duration-200 text-sm font-medium shadow-sm hover:shadow-md disabled:opacity-70 disabled:cursor-not-allowed"
                     >
                       {isDeleting ? (
                         <span className="inline-flex items-center">
@@ -99,7 +111,14 @@ const InstructorCourses = () => {
               </div>
             ))}
           </div>
+          
         )}
+        {showStudentsModal && (
+                <StudentsModal 
+                  courseId={selectedCourseId} 
+                  onClose={() => setShowStudentsModal(false)} 
+                />
+          )}
       </div>
     </div>
   );

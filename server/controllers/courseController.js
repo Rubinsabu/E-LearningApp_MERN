@@ -1,5 +1,6 @@
 import Course from '../models/Course.js';
 import Enrollment from '../models/Enrollment.js';
+import mongoose from 'mongoose';
 
 // Instructor side
 export const createCourse = async (req, res) => {
@@ -166,3 +167,32 @@ export const getEnrolledCourses = async(req,res)=>{
     res.status(500).json({ message: 'Server error' });
   }
 }
+
+export const getEnrolledStudents = async(req,res) =>{
+  try {
+    const { courseId } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(courseId)) {
+      return res.status(400).json({ message: 'Invalid course ID' });
+    }
+
+    // Find all enrollments for this course and populate student details
+    const enrollments = await Enrollment.find({ course: courseId })
+      .populate({
+        path: 'student',
+        select: '_id name email', 
+      })
+      .sort({ createdAt: -1 }); 
+      const students = enrollments.map(enrollment => ({
+        _id: enrollment.student._id,
+        name: enrollment.student.name,
+        email: enrollment.student.email,
+        enrolledAt: enrollment.createdAt,
+      }));
+  
+      res.status(200).json(students);
+    } catch (error) {
+      console.error('Error fetching enrolled students:', error);
+      res.status(500).json({ message: 'Server error while fetching enrolled students' });
+    }
+};

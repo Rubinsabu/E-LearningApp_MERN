@@ -1,7 +1,7 @@
 import express from 'express';
 import { createCourse, updateCourse, deleteCourse, getInstructorCourses } from '../controllers/courseController.js';
 import { verifyToken, requireRole } from '../middleware/authMiddleware.js';
-import { getAllPublishedCourses, getCourseDetails,enrollInCourse, getEnrolledCourses } from '../controllers/courseController.js';
+import { getAllPublishedCourses, getCourseDetails,enrollInCourse, getEnrolledCourses, getEnrolledStudents } from '../controllers/courseController.js';
 
 const router = express.Router();
 
@@ -12,6 +12,7 @@ router.post('/courses', requireRole(['instructor']), createCourse);
 router.put('/courses/:id', requireRole(['instructor']), updateCourse);
 router.delete('/courses/:id', requireRole(['instructor']), deleteCourse);
 router.get('/courses/my-courses', requireRole(['instructor']), getInstructorCourses);
+router.get('/:courseId/enrolled-students', requireRole(['instructor']), getEnrolledStudents);
 
 //student - course
 router.get('/courses', getAllPublishedCourses);
