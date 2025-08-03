@@ -136,55 +136,33 @@ export const enrollInCourse = async (req, res) => {
 
 export const getEnrolledCourses = async(req,res)=>{
   try{
-    const studentId = req.user.id; 
+
+    const studentId = req.user.id;
 
     const enrollments = await Enrollment.find({ student: studentId }).populate({
       path: 'course',
-      select: 'title category thumbnail',
+      select: 'title category thumbnail lessons',
     });
 
-    const enrolledCourses = enrollments.map((enrollment) => enrollment.course);
-    console.log(enrolledCourses);
+    // Transform enrollments to include progress
+    const enrolledCourses = enrollments.map((enrollment) => {
+      const course = enrollment.course;
+      const totalLessons = course.lessons.length;
+      const watchedLessons = enrollment.watchedLessons.length;
+      const progressPercentage = totalLessons > 0 
+        ? Math.round((watchedLessons / totalLessons) * 100) 
+        : 0;
 
-    
+      return {
+        ...course.toObject(), // Convert Mongoose document to plain object
+        progressPercentage,
+        enrollmentId: enrollment._id 
+      };
+    });
     res.status(200).json(enrolledCourses);
+
   }catch(error){
     console.error('Error fetching enrolled courses',error);
     res.status(500).json({ message: 'Server error' });
   }
 }
-
-// export const getProgress = async(req,res)=>{
-//   try{
-//     const { id: courseId } = req.params;
-//     console.log("User details : ", req.user);
-//     const studentId = req.user.id;
-//     console.log("studentId: ",studentId);
-//     const course = await Course.findById(courseId);
-//     if (!course) {
-//       return res.status(404).json({ message: 'Course not found' });
-//     }
-//     console.log('completed course finding..')
-//     const courseEnrollment = await Enrollment.findOne({ 
-//       student: studentId, 
-//       course: courseId 
-//     });
-//     if (!courseEnrollment) {
-//       return res.status(404).json({ message: 'Enrollment not found' });
-//     }
-//     console.log("completed enrollement finding")
-//     const totalLessons = course.lessons.length;
-//     if (totalLessons === 0) {
-//       return res.status(200).json({ progress: 0 }); 
-//     }
-//     console.log("Found lesson lenght")
-//     const watchedLessons = courseEnrollment.watchedLessons.length;
-//     const progressPercentage = Math.round((watchedLessons / totalLessons) * 100);
-
-//     res.status(200).json({ progress: progressPercentage });
-
-//   }catch(error){
-//     console.error('Error fetching progress',error);
-//     res.status(500).json({ message: 'Progress error from server' });
-//   }
-// }

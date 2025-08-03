@@ -57,7 +57,18 @@ const EnrolledCourses = () => {
                     {course.title}
                   </h3>
                   <p className="text-gray-500 text-sm mb-4">{course.category}</p>
-                  
+                  <div className="mb-4">
+                    <div className="flex items-center justify-between text-sm text-gray-600 mb-2">
+                      <span>Progress</span>
+                      <span>{course.progressPercentage || 0}%</span>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-2">
+                      <div 
+                        className="bg-gradient-to-r from-green-400 to-green-700 h-2 rounded-full" 
+                        style={{ width: `${course.progressPercentage || 0}%` }}
+                      ></div>
+                    </div>
+                  </div>
                   <Link
                     to={`/courses/${course._id}`}
                     className="inline-block bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700 transition-colors duration-200"
