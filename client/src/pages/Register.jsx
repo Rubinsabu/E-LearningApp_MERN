@@ -2,6 +2,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { registerUser } from '../features/auth/authSlice';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
 
 const Register = () => {
   const [form, setForm] = useState({ name: '', email: '', password: '', role: 'student' });
@@ -17,7 +18,14 @@ const Register = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    dispatch(registerUser(form));
+    try {
+      dispatch(registerUser(form));
+      toast.success('User registered successfully!');
+    } catch (error) {
+      console.error(error);
+      toast.error('Failed to create User !');
+    }
+    
   };
 
   return (

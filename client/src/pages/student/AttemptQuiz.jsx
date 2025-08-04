@@ -1,71 +1,7 @@
-// import { useEffect, useState } from 'react';
-// import axios from '../../api/axiosInstance';
-// import { useNavigate, useParams } from 'react-router-dom';
-
-// const AttemptQuiz = () => {
-//   const { courseId } = useParams();
-//   const navigate = useNavigate();
-//   const [quiz, setQuiz] = useState([]);
-//   const [answers, setAnswers] = useState({});
-//   const [result, setResult] = useState(null);
-
-//   useEffect(() => {
-//     const fetchQuiz = async () => {
-//       const res = await axios.get(`/quiz/${courseId}`);
-//       setQuiz(res.data);
-//     };
-//     fetchQuiz();
-//   }, [courseId]);
-
-//   const handleSubmit = async () => {
-//     const res = await axios.post(`/quiz/submit/${courseId}`, { answers });
-//     setResult(res.data);
-//   };
-
-//   return (
-//     <div className="p-6">
-//       <h2 className="text-2xl mb-4 font-semibold">Quiz</h2>
-//       {quiz.map((q, i) => (
-//         <div key={q._id} className="mb-6">
-//           <p className="font-medium">{i + 1}. {q.question}</p>
-//           {q.options.map((opt, j) => (
-//             <label key={j} className="block">
-//               <input
-//                 type="radio"
-//                 name={`question-${q._id}`}
-//                 value={opt}
-//                 checked={answers[q._id] === opt}
-//                 onChange={() =>
-//                   setAnswers(prev => ({ ...prev, [q._id]: opt }))
-//                 }
-//               /> {opt}
-//             </label>
-//           ))}
-//         </div>
-//       ))}
-
-//     <div className='flex justify-between'>
-//       <button onClick={handleSubmit} className="bg-blue-600 text-white px-4 py-2 rounded-md">Submit</button>
-
-//       {result && <button onClick={()=>navigate("/enrolled-courses")} className="bg-green-600 text-white px-4 py-2 rounded-md">Finish Course</button>}
-//     </div>
-    
-//       {result && (
-//         <div className="mt-6 bg-green-100 p-4 rounded-md">
-//           <h3 className="text-lg font-bold">Result</h3>
-//           <p>You scored {result.score} out of {result.total}</p>
-//         </div>
-//       )}
-//     </div>
-//   );
-// };
-
-// export default AttemptQuiz;
-
-
 import { useEffect, useState } from 'react';
 import axios from '../../api/axiosInstance';
 import { useNavigate, useParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 const AttemptQuiz = () => {
   const { courseId } = useParams();
@@ -297,7 +233,9 @@ const AttemptQuiz = () => {
             {/* Action Button */}
             <div className="text-center">
               <button 
-                onClick={() => navigate("/enrolled-courses")} 
+                onClick={() => {
+                  toast.success('Course completed! 🎉');
+                  navigate("/enrolled-courses")}} 
                 className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-green-600 to-emerald-600 text-white text-lg font-semibold rounded-xl hover:from-green-700 hover:to-emerald-700 transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl"
               >
                 <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">

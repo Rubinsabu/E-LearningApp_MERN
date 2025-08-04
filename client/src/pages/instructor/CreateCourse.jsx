@@ -1,8 +1,11 @@
 import { useState } from 'react';
 import { useCreateCourseMutation } from '../../features/instructor/instructorApi';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 const CreateCourse = () => {
   const [createCourse] = useCreateCourseMutation();
+  const navigate = useNavigate();
   const [form, setForm] = useState({
     title: '',
     description: '',
@@ -23,11 +26,14 @@ const CreateCourse = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await createCourse(form);
-    setForm({
-      title: '', description: '', category: '', thumbnail: '',
-      lessons: [{ title: '', content: '', videoUrl: '' }],
-    });
+    try {
+      await createCourse(form).unwrap(); // Ensure error is caught if it fails
+      toast.success('Course created successfully!');
+      navigate('/instructor/courses');
+    } catch (error) {
+      console.error(error);
+      toast.error('Failed to create course');
+    }
   };
 
   return (

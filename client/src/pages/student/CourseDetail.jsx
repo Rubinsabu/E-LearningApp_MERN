@@ -2,6 +2,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import axios from '../../api/axiosInstance';
 import ThumbnailImage from '../../components/ThumbnailImage';
+import { toast } from 'react-toastify';
 
 const CourseDetail = () => {
   const { id } = useParams();
@@ -23,10 +24,11 @@ const CourseDetail = () => {
   const handleEnroll = async () => {
     try {
       await axios.post(`/student/enroll/${id}`);
-      alert('Enrolled successfully');
+      toast.success('Enrolled successfully !! ');
       navigate('/enrolled-courses');
     } catch (err) {
       alert(err.response?.data?.message || 'Enrollment failed');
+      
     }
   };
 

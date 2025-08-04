@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from '../../api/axiosInstance';
+import { toast } from 'react-toastify';
 
 const CreateQuiz = () => {
     const { courseId } = useParams();
@@ -12,10 +13,11 @@ const CreateQuiz = () => {
     const handleSubmit = async () => {
       try {
         await axios.post(`/quiz/${courseId}`, { questions });
+        toast.success('Quiz added successfully!');
         navigate('/instructor/courses');
-        alert('Quiz added!');
       } catch (err) {
         console.error(err);
+        toast.error('Failed to create Quiz');
       }
     };
   
