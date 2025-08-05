@@ -64,19 +64,25 @@ export const unbanUser = async (req, res) => {
 
   
 export const getPlatformStats = async (req, res) => {
+  try {
     const totalUsers = await User.countDocuments();
     const totalCourses = await Course.countDocuments();
     const approvedCourses = await Course.countDocuments({ isApproved: true });
-    
-    const popularCourses = await Enrollment.aggregate([
+
+    // Aggregation to get most popular courses based on number of enrollments
+    const popularCoursesData = await Enrollment.aggregate([
       {
         $group: {
           _id: '$course',
-          count: { $sum: 1 }
+          enrollmentsCount: { $sum: 1 }
         }
       },
-      { $sort: { count: -1 } },
-      { $limit: 5 },
+      {
+        $sort: { enrollmentsCount: -1 } // Sort by most enrolled
+      },
+      {
+        $limit: 5 // Get top 5 most popular courses
+      },
       {
         $lookup: {
           from: 'courses',
@@ -93,12 +99,21 @@ export const getPlatformStats = async (req, res) => {
           _id: 0,
           courseId: '$courseDetails._id',
           title: '$courseDetails.title',
-          enrollments: '$count'
+          enrollmentsCount: 1
         }
       }
     ]);
-    //console.log("Users : ",totalUsers,"Total courses : ",totalCourses,"Popular courses : ",popularCourses);
-    res.json({ totalUsers, totalCourses, approvedCourses});
+
+    res.json({
+      totalUsers,
+      totalCourses,
+      approvedCourses,
+      popularCourses: popularCoursesData // Send to frontend
+    });
+  } catch (error) {
+    console.error('Error in getPlatformStats:', error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
   };
 
 

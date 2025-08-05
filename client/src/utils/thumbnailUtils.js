@@ -5,7 +5,6 @@ export const getYouTubeVideoId = (url) => {
     return match ? match[1] : null;
   };
   
-  // Function to get appropriate thumbnail URL
   export const getThumbnailUrl = (url) => {
     // Check if it's a YouTube URL
     const videoId = getYouTubeVideoId(url);

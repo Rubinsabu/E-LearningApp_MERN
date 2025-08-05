@@ -1,9 +1,19 @@
 import { useEffect, useState } from 'react';
 import axios from '../../api/axiosInstance';
 import { Link } from 'react-router-dom';
+import { Pie } from 'react-chartjs-2';
+import {
+  Chart as ChartJS,
+  ArcElement,
+  Tooltip,
+  Legend,
+} from 'chart.js';
+
+ChartJS.register(ArcElement, Tooltip, Legend);
 
 const AdminDashboard = () => {
-  const [stats, setStats] = useState({ totalUsers: 0, totalCourses: 0, approvedCourses: 0});
+  const [stats, setStats] = useState({ totalUsers: 0, totalCourses: 0, approvedCourses: 0,popularCourses: [],
+  });
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -12,6 +22,30 @@ const AdminDashboard = () => {
     };
     fetchStats();
   }, []);
+
+  const pieData = {
+    labels: stats.popularCourses.map(course => course.title),
+    datasets: [
+      {
+        label: 'Enrollments',
+        data: stats.popularCourses.map(course => course.enrollmentsCount),
+        backgroundColor: [
+          '#4ade80', '#60a5fa', '#facc15', '#f472b6', '#38bdf8',
+        ],
+        borderColor: '#fff',
+        borderWidth: 2,
+      },
+    ],
+  };
+
+  const pieOptions = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'right',
+      },
+    },
+  };
 
   return (
 
@@ -36,6 +70,18 @@ const AdminDashboard = () => {
             <p className="text-3xl font-bold text-blue-600">{stats.approvedCourses}</p>
           </div>
         </div>
+
+        {/* Popular Courses Pie Chart */}
+          {stats.popularCourses.length > 0 && (
+            <div className="mt-6 bg-white p-6 rounded shadow-sm flex flex-col items-center">
+              <h2 className="text-2xl font-semibold text-gray-800 text-center mb-1">
+                Most Popular Courses (Top 5)
+              </h2>
+              <div className="w-[350px] sm:w-[380px] md:w-[450px]">
+                <Pie data={pieData} options={pieOptions} />
+              </div>
+            </div>
+          )}
 
         {/* Action Buttons */}
         <div className="mt-10 flex flex-col sm:flex-row justify-center gap-4">
