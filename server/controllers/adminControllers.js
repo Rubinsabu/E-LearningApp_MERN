@@ -69,7 +69,7 @@ export const getPlatformStats = async (req, res) => {
     const totalCourses = await Course.countDocuments();
     const approvedCourses = await Course.countDocuments({ isApproved: true });
 
-    // Aggregation to get most popular courses based on number of enrollments
+    
     const popularCoursesData = await Enrollment.aggregate([
       {
         $group: {
@@ -108,7 +108,7 @@ export const getPlatformStats = async (req, res) => {
       totalUsers,
       totalCourses,
       approvedCourses,
-      popularCourses: popularCoursesData // Send to frontend
+      popularCourses: popularCoursesData 
     });
   } catch (error) {
     console.error('Error in getPlatformStats:', error);
